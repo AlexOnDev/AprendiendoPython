@@ -19,8 +19,8 @@ print(my_other_list[0])
 print(my_other_list[1])
 print(my_other_list[-1])
 print(my_other_list[-3])
-
 print(my_list.count(30))
+
 
 #ERROR age, height, name = my_other_list
 age, height, name, surname = my_other_list 
