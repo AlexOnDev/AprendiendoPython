@@ -9,19 +9,27 @@ txt_file.write("Alejandro\nde Pablo\n22 años\nPython")
 txt_file.seek(0)
 
 # print(txt_file.read())
-print(txt_file.read(10)) # Lectura funciona con punteros
-print(txt_file.readline())
-print(txt_file.readline())
+print(txt_file.read(10).strip()) # strip() elimina el espacio posterior
+print(txt_file.readline().strip())
+print(txt_file.readline().strip())
 for line in txt_file.readlines():
      print(line.strip())
 
-posicion_anterior = txt_file.tell() # El final del archivo antes de escribir "No me gusta Python"
+# Guarda la posición del puntero antes de escribir la nueva línea
+posicion_anterior = txt_file.tell()
 
+# Escribe más contenido al archivo
 txt_file.write("\nNo me gusta Python")
-txt_file.flush()
+txt_file.flush()  # Asegura que el contenido se escriba en el archivo
 
-txt_file.seek(posicion_anterior + 2) # El + 2 porque no cuenta el cambio de linea e imprime vacio
-print(txt_file.readline())  # Lee la nueva línea escrita
+# Mueve el puntero de vuelta a la posición donde se escribió la nueva línea
+txt_file.seek(posicion_anterior)
+
+# Lee desde la posición donde se encuentra el puntero después de la nueva escritura
+# (esto lee desde el final del archivo original hasta el nuevo contenido)
+contenido_restante = txt_file.read().strip()
+print(contenido_restante)  # Imprime el contenido restante, incluyendo la nueva línea
+
 
 txt_file.close()
 
