@@ -40,8 +40,12 @@ with open("Intermediate/my_file.txt", "a") as my_other_file: # Con with no hace 
 import os
 # os.remove("Intermediate/my_file.txt")
 
+
+
 # .json file
 import json
+import xml.dom
+import xml.etree
 
 json_file = open("Intermediate/my_file.json", "w+")
 
@@ -65,17 +69,12 @@ print(json_dict)
 print(type(json_dict))
 print(json_dict["name"])
 
+
+
 # .csv file
 import csv
 
 csv_file =  open("Intermediate/my_file.csv", "w+")
-
-csv_test ={
-    "name":"Alejandro", 
-    "surname":"de Pablo",
-    "age":22, 
-    "languages": ["Python","Kotlin", "Swift"],
-    "website":"https://example.com"}
 
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(["name", "surname", "age","language", "website"])
@@ -87,8 +86,57 @@ csv_file.close()
 with open("Intermediate/my_file.csv") as my_other_file:
     for line in my_other_file.readlines():
         print(line.strip())
+
 # .xlsx file
 # import xlrd # debe instalarse el módulo
 
+
+
 # .xml file
-import xml
+import xml.etree.ElementTree as ET
+
+# CREAR ARCHIVO XML
+
+# Crear un elemento raíz
+root = ET.Element("root")
+
+# Crear sub-elementos
+child1 = ET.SubElement(root, "child1")
+child1.text = "Texto del primer hijo"
+
+child2 = ET.SubElement(root, "child2")
+child2.text = "Texto del segundo hijo"
+
+# Crear un objeto ElementTree
+tree = ET.ElementTree(root)
+
+# Guardar el árbol XML en un archivo
+with open("Intermediate/my_file.xml", "wb") as file:
+    tree.write(file, encoding="utf-8", xml_declaration=True)
+
+# LEER ARCHVIO XML
+tree = ET.parse("Intermediate/my_file.xml")
+root = tree.getroot()
+
+# Imprimir el contenido del XML
+print("Contenido del archivo XML:")
+
+for child in root:
+    print(f"{child.tag}: {child.text}")
+
+print("Archivo XML leído exitosamente.")
+
+
+# MODIFICAR ARCHIVO XML
+
+# Crear un nuevo elemento
+new_child = ET.SubElement(root, "child3")
+new_child.text = "Texto del tercer hijo"
+
+# Guardar el árbol XML modificado en el archivo
+with open("Intermediate/my_file.xml", "wb") as file:
+    tree.write(file, encoding="utf-8", xml_declaration=True)
+
+print("Archivo XML modificado exitosamente.")
+
+
