@@ -1,5 +1,5 @@
 ### File Handling ###
-import os
+
 # .txt file
 
 txt_file = open("Intermediate/my_file.txt","w+") # r+ para leer y escribir. Si w+ lo sobreescribe
@@ -12,6 +12,7 @@ txt_file.seek(0)
 print(txt_file.read(10).strip()) # strip() elimina el espacio posterior
 print(txt_file.readline().strip())
 print(txt_file.readline().strip())
+
 for line in txt_file.readlines():
      print(line.strip())
 
@@ -33,9 +34,61 @@ print(contenido_restante)  # Imprime el contenido restante, incluyendo la nueva 
 
 txt_file.close()
 
-with open("Intermediate/my_file.txt", "a") as my_other_file:
+with open("Intermediate/my_file.txt", "a") as my_other_file: # Con with no hace falta escribir .close(), tambien maneja excepciones. *** Mejor opción ***
     my_other_file.write("\nNi JavaScript")
 
+import os
 # os.remove("Intermediate/my_file.txt")
 
 # .json file
+import json
+
+json_file = open("Intermediate/my_file.json", "w+")
+
+json_test ={
+    "name":"Alejandro", 
+    "surname":"de Pablo",
+    "age":22, 
+    "languages": ["Python","Kotlin", "Swift"],
+    "website":"https://example.com"}
+
+json.dump(json_test, json_file, indent = 2)
+
+json_file.close() # Lo cerramos para abrirlo de nuevo y poder leerlo
+
+with open("Intermediate/my_file.json") as my_other_file:
+    for line in my_other_file.readlines():
+        print(line)
+
+json_dict = json.load(open("Intermediate/my_file.json"))
+print(json_dict)
+print(type(json_dict))
+print(json_dict["name"])
+
+# .csv file
+import csv
+
+csv_file =  open("Intermediate/my_file.csv", "w+")
+
+csv_test ={
+    "name":"Alejandro", 
+    "surname":"de Pablo",
+    "age":22, 
+    "languages": ["Python","Kotlin", "Swift"],
+    "website":"https://example.com"}
+
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(["name", "surname", "age","language", "website"])
+csv_writer.writerow(["Alejandro", "de Pablo", "22","Python", "inventada.com"])
+csv_writer.writerow(["Roswell", "","2","COBOL", ""])
+
+csv_file.close()
+
+with open("Intermediate/my_file.csv") as my_other_file:
+    for line in my_other_file.readlines():
+        print(line.strip())
+# .xlsx file
+# import xlrd # debe instalarse el módulo
+
+# .xml file
+import xml
