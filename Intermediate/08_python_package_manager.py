@@ -29,7 +29,3 @@ print(response.json())
 from mypackage import arithmetics
 
 print(arithmetics.sum_two_values(1,4))
-
-from myotherpackage import my_other_arithmetics
-
-print(my_other_arithmetics.sum_two_values(1,4))
