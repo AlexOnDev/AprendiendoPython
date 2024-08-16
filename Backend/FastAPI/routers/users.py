@@ -1,7 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-app = FastAPI()
+router = APIRouter(tags=["users"])
 
 # Entidad user
 class User(BaseModel): # Al heredar de basemodel tiene capacidad de crear una entidad gracias al BaseModel
@@ -15,39 +15,39 @@ users_list = [User(id=1,name="Alejandro", surname="de Pablo", url="http://wikipe
          User(id=2,name="Pepe", surname="Perez", url="http://wiki.com",age=22),
          User(id=3,name="Haakon", surname="Dahlberg", url="http://haakon.com",age=20)]
 
-@app.get("/usersjson")
+@router.get("/usersjson")
 async def usersjson():
     return [{"name":"Alejandro", "apellido":"de Pablo", "url":"http://wikipedia.com", "age":22},
             {"name":"Pepe", "apellido":"Perez", "url":"http://wiki.com", "age":22},
             {"name":"Haakon", "apellido":"Dahlberg", "url":"http://haakon.com", "age":20}]
 
-@app.get("/users")
+@router.get("/users")
 async def users():
     # return User(name = "Alejandro", surname="de Pablo", url="http://wikipedia.com", age=22)
     return users_list
 
 # Path
-@app.get("/user/{id}")
+@router.get("/user/{id}")
 async def user(id: int): # FastApi trabaja tipando los datos
     return search_user(id)
     
 # Query
-@app.get("/user/") # http://127.0.0.1:8000/userquery/?id=1 (query)
+@router.get("/user/") # http://127.0.0.1:8000/userquery/?id=1 (query)
 async def user(id: int): # FastApi trabaja tipando los datos
     return search_user(id)
 
 # Post  
-@app.post("/user/", response_model=User, status_code=201) # Response_model = Respuesta por defecto para documentacion /docs || Codigo de respuesta por defecto status_code
+@router.post("/user/", response_model=User, status_code=201) # Response_model = Respuesta por defecto para documentacion /docs || Codigo de respuesta por defecto status_code
 async def user(user: User):
     if type(search_user(user.id)) == User:
         raise HTTPException(status_code=404, detail="El usuario ya existe") # Si return devuelve un json, si raise usa el status_code
         # return {"error":"El usuario ya existe"}
     
-    users_list.append(user)
+    users_list.routerend(user)
     return user
 
 # Put     
-@app.put("/user/")
+@router.put("/user/")
 async def user(user: User):
 
     found = False
@@ -63,7 +63,7 @@ async def user(user: User):
     return user
 
 # Delete
-@app.delete("/user/{id}")
+@router.delete("/user/{id}")
 async def user(id: int):
 
     found = False
