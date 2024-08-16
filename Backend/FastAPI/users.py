@@ -35,7 +35,45 @@ async def user(id: int): # FastApi trabaja tipando los datos
 @app.get("/user/") # http://127.0.0.1:8000/userquery/?id=1 (query)
 async def user(id: int): # FastApi trabaja tipando los datos
     return search_user(id)
+
+# Post  
+@app.post("/user/")
+async def user(user: User):
+    if type(search_user(user.id)) == User:
+        return {"error":"El usuario ya existe"}
     
+    users_list.append(user)
+    return user
+
+# Put     
+@app.put("/user/")
+async def user(user: User):
+
+    found = False
+
+    for index, saved_user in enumerate(users_list): # Enumerando para obtener posicion y asi poder modificarlo
+        if saved_user.id == user.id:
+            users_list[index] = user
+            found = True
+
+    if not found:
+         return {"error":"No se ha actualizado el usuario"}
+    
+    return user
+
+# Delete
+@app.delete("/user/{id}")
+async def user(id: int):
+
+    found = False
+
+    for index, saved_user in enumerate(users_list): 
+        if saved_user.id == id:
+            del users_list[index]
+            found = True
+
+    if not found:
+         return {"error":"No se ha eliminado el usuario"}
 
 
 def search_user(id: int):
@@ -44,3 +82,4 @@ def search_user(id: int):
         return list(users)[0]
     except:
         return {"error":"No se ha encontrado el usuario"}
+
