@@ -9,8 +9,6 @@ router = APIRouter(prefix="/userdb",
                    tags=["userdb"], 
                    responses={status.HTTP_404_NOT_FOUND: {"message": "No encontrado"}}) 
 
-users_list = []
-
 # python -m uvicorn main:app --log-level debug
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -48,32 +46,25 @@ async def user(user: User):
     return User(**new_user)
 
 # Put     
-@router.put("/")
+@router.put("/", response_model=User)
 async def user(user: User):
 
-    found = False
-
-    for index, saved_user in enumerate(users_list):
-        if saved_user.id == user.id:
-            users_list[index] = user
-            found = True
-
-    if not found:
-         return {"error":"No se ha actualizado el usuario"}
+    user_dict = dict(user)
+    del user_dict["id"]
+    try:
+        db_client.local.users.find_one_and_replace({"_id":ObjectId(user.id)}, user_dict)
+    except:
+        return {"error":"No se ha actualizado el usuario"}
     
-    return user
+    return search_user("_id", ObjectId(user.id))
 
 # Delete
-@router.delete("/{id}")
-async def user(id: int):
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+async def user(id: str):
 
-    found = False
+    found = db_client.local.users.find_one_and_delete({"_id": ObjectId(id)})
 
-    for index, saved_user in enumerate(users_list): 
-        if saved_user.id == id:
-            del users_list[index]
-            found = True
-
+ 
     if not found:
          return {"error":"No se ha eliminado el usuario"}
 
