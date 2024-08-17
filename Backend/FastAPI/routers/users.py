@@ -43,7 +43,7 @@ async def user(user: User):
         raise HTTPException(status_code=404, detail="El usuario ya existe") # Si return devuelve un json, si raise usa el status_code
         # return {"error":"El usuario ya existe"}
     
-    users_list.routerend(user)
+    users_list.append(user)
     return user
 
 # Put     

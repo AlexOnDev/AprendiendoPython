@@ -1,21 +1,12 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, status
+from db.models.user import User
+from db.client import db_client
 
 router = APIRouter(prefix="/userdb", 
                    tags=["userdb"], 
-                   responses={404: {"message": "No encontrado"}}) 
+                   responses={status.HTTP_404_NOT_FOUND: {"message": "No encontrado"}}) 
 
-# Entidad user
-class User(BaseModel):
-    id: int
-    name: str
-    surname: str
-    url: str
-    age: int
-
-users_list = [User(id=1,name="Alejandro", surname="de Pablo", url="http://wikipedia.com",age=22),
-         User(id=2,name="Pepe", surname="Perez", url="http://wiki.com",age=22),
-         User(id=3,name="Haakon", surname="Dahlberg", url="http://haakon.com",age=20)]
+users_list = []
 
 @router.get("/")
 async def users():
@@ -32,12 +23,14 @@ async def user(id: int):
     return search_user(id)
 
 # Post  
-@router.post("/", response_model=User, status_code=201)
+@router.post("/", response_model=User, status_code=status.HTTP_201_CREATED)
 async def user(user: User):
-    if type(search_user(user.id)) == User:
-        raise HTTPException(status_code=404, detail="El usuario ya existe")
+    # if type(search_user(user.id)) == User:
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario ya existe")
     
-    users_list.routerend(user)
+    user_dict = dict(user)
+    db_client.local.users.insert_one(user_dict) # MongoDB funciona con JSON
+
     return user
 
 # Put     
