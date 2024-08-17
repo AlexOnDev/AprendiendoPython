@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
+import logging
 from db.models.user import User
+from db.schemas.user import user_schema
 from db.client import db_client
 
 router = APIRouter(prefix="/userdb", 
@@ -7,6 +9,10 @@ router = APIRouter(prefix="/userdb",
                    responses={status.HTTP_404_NOT_FOUND: {"message": "No encontrado"}}) 
 
 users_list = []
+
+logger = logging.getLogger('uvicorn.error')
+logger.setLevel(logging.DEBUG)
+
 
 @router.get("/")
 async def users():
@@ -27,11 +33,15 @@ async def user(id: int):
 async def user(user: User):
     # if type(search_user(user.id)) == User:
     #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario ya existe")
-    
     user_dict = dict(user)
-    db_client.local.users.insert_one(user_dict) # MongoDB funciona con JSON
+    del user_dict["id"] # Asi mongoDB autogenera el id
 
-    return user
+    id = db_client.local.users.insert_one(user_dict).inserted_id # MongoDB funciona con JSON
+    logger.debug(id)
+    new_user = user_schema(db_client.local.users.find_one({"_id":id})) # _id  # (formato JSON)
+    
+    
+    return User(**new_user)
 
 # Put     
 @router.put("/")
