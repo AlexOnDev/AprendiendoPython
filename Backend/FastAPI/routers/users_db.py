@@ -36,7 +36,7 @@ async def user(user: User):
     
     user_dict = dict(user)
     # logger.debug(user_dict)
-    del user_dict["id"] # Asi mongoDB autogenera el id
+    del user_dict["id"] # Asi mongoDB autogenerara el id
 
     id = db_client.local.users.insert_one(user_dict).inserted_id # MongoDB funciona con JSON
     new_user = user_schema(db_client.local.users.find_one({"_id":id})) # _id  # (formato JSON)
